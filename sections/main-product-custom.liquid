@@ -1,0 +1,157 @@
+<section
+  id="MainProduct-{{ section.id }}"
+  class="section-{{ section.id }}"
+  data-section="{{ section.id }}"
+>
+  {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+  {%- assign product_form_id = 'product-form-custom' | append: section.id -%}
+
+  <div class="containe-fluid">
+    <div class="product__container row w-100">
+      <div class="product__images col-lg-6">
+        <div class="product__images-main">
+          {{
+            product
+            | image_url: width: 600
+            | image_tag: widths: '200, 300, 400', preload: true, height: null, class: 'w-100'
+          }}
+        </div>
+        <div class="product__images-thumbs d-flex">
+          {% for media in product.media %}
+            <div class="product__images-thumb">{{- media | media_tag }}</div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="product__main col-lg-6 p-5">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'vendor' %}
+              <p class="product__info-vendor">{{- product.vendor -}}</p>
+            {% when 'sku' %}
+              <p class="product__info-sku">{{- product.sku -}}</p>
+            {% when 'title' %}
+              <h2 class="product__title">{{- product.title -}}</h2>
+            {% when 'price' %}
+              <p class="product__info-price">{{- product.price | money_with_currency -}}</p>
+            {% when 'quantity_selector' %}
+              {% render 'quantity-selector' %}
+            {% when 'variant_selector' %}
+              {% render 'variant-selector', product: product, block: block, product_form_id: product_form_id %}
+            {% when 'description' %}
+              {% if product.description != blank %}
+                <p class="product__description">{{- product.description -}}</p>
+              {% endif %}
+            {% when 'text' %}
+              <p>{{- block.settings.text -}}</p>
+            {% when 'buy_buttons' %}
+              {%- render 'buy-buttons-custom',
+                block: block,
+                product: product,
+                product_form_id: product_form_id,
+                section_id: section.id,
+                show_pickup_availability: true
+              -%}
+            {%- when 'icon-with-text' -%}
+              {% render 'icon-with-text', block: block %}
+            {% when '@app' %}
+              {% render block %}
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</section>
+
+{% schema %}
+{
+  "name": "Main Custom Product",
+  "class": "custom",
+  "blocks": [
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "vendor",
+      "name": "Vendor",
+      "limit": 1
+    },
+    {
+      "type": "sku",
+      "name": "SKU",
+      "limit": 1
+    },
+    {
+      "type": "quantity_selector",
+      "name": "Quantity Selector",
+      "limit": 1
+    },
+    {
+      "type": "variant_selector",
+      "name": "Variant Picker",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "picker_type",
+          "options": [
+            {
+              "value": "dropdown",
+              "label": "Dropdown"
+            },
+            {
+              "value": "button",
+              "label": "Buttons"
+            }
+          ],
+          "default": "button",
+          "label": "Buttons"
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    },
+    {
+      "type": "icon-with-text",
+      "name": "Icon with text"
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Buy Buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "default": true,
+          "label": "Show Dynamic Checkout"
+        }
+      ]
+    },
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}
