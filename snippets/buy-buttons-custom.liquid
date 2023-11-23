@@ -1,0 +1,130 @@
+{% comment %}
+  Renders product buy-buttons.
+  Accepts:
+  - product: {Object} product object.
+  - block: {Object} passing the block information.
+  - product_form_id: {String} product form id.
+  - section_id: {String} id of section to which this snippet belongs.
+  - show_pickup_availability: {Boolean} for the pickup availability. If true the pickup availability is rendered, false - not rendered (optional).
+
+  Usage:
+  {% render 'buy-buttons-custom', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true %}
+{% endcomment %}
+
+<div {{ block.shopify_attributes }}>
+  {%- if product != blank -%}
+    {%- liquid
+      assign show_dynamic_checkout = false
+      if block.settings.show_dynamic_checkout
+        assign show_dynamic_checkout = true
+      endif
+    -%}
+
+    <div class="product-form__error-message-wrapper hidden" role="alert">
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        class="icon icon-error"
+        viewBox="0 0 13 13"
+      >
+        <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"/>
+        <circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"/>
+        <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"/>
+        <path d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z" fill="white" stroke="#EB001B" stroke-width="0.7">
+      </svg>
+      <span class="product-form__error-message"></span>
+    </div>
+
+    {%- form 'product',
+      product,
+      id: product_form_id,
+      class: 'form'
+    -%}
+        <input
+          type="hidden"
+          name="id"
+          value="{{ product.selected_or_first_available_variant.id }}"
+          {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
+            disabled
+          {% endif %}
+          class="js-product-variant-id-input"
+        >
+        <input id="product-form__quantity" type="hidden" value="1" name="quantity">
+
+        <div class="product-form__buttons">
+          <button
+            id="ATCButton-{{ section_id }}"
+            type="submit"
+            name="atc"
+            class="product-button__atc button button--full-width {% if show_dynamic_checkout %}button--secondary{% else %}button--primary{% endif %}"
+            {% if product.selected_or_first_available_variant.available == false %}
+              disabled
+            {% endif %}
+          >
+            <span>
+              {%- if product.selected_or_first_available_variant.available == false -%}
+                Sold Out
+              {%- else -%}
+                Add to Cart
+              {%- endif -%}
+            </span>
+            {%- render 'loading-spinner' -%}
+          </button>
+          {%- if show_dynamic_checkout -%}
+            {{ form | payment_button }}
+          {%- endif -%}
+        </div>
+      {%- endform -%}
+  {%- else -%}
+    <div class="product-form">
+      <div class="product-form__buttons form">
+        <button
+          type="submit"
+          name="add"
+          class="product-form__submit button button--full-width button--primary"
+          disabled
+        >
+          Sold Out
+        </button>
+        {%- render 'loading-spinner' -%}
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{{ 'cart-drawer-custom.js' | asset_url | script_tag }}
+
+{{ 'option_selection.js' | asset_url | script_tag }}
+
+<script>
+    const product = {{ product | json }};
+    const container = ".product__main";
+      
+
+    const productOptionSelectors = new Shopify.OptionSelectors2(container, {
+      product: product,
+      onVariantSelected: callback,
+      enableHistoryState: true
+    });
+
+    function callback(variant, container) {
+      const productMain = document.querySelector('.product__main');
+      const submitButton = document.querySelector('.product-form__buttons button');
+      const submitButtonText = document.querySelector('.product-form__buttons button span');
+      const productPrice = productMain.querySelector('.product__info-price');
+      const productQuantity = productMain.querySelector('.quantity__input').value;
+      const formQuantity = productMain.querySelector('#product-form__quantity');   
+      if (variant) {
+        if (variant.available) {
+          submitButton.removeAttribute('disabled');
+          submitButtonText.innerText = 'Add to Cart';
+          formQuantity.value = productQuantity;
+        } else {
+          submitButton.setAttribute('disabled', true);
+          submitButtonText.innerText = 'Sold Out';
+        }
+      } else {
+        submitButton.setAttribute('disabled', true);
+      }
+    }
+</script>
