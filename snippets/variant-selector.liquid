@@ -1,0 +1,32 @@
+{% comment %}
+  Display variant options for a product
+
+  Accepts: current_variant {Object} variant object.
+{% endcomment %}
+<div class="js-product-options">
+  {% unless product.has_only_default_variant %}
+    {% for option in product.options_with_values %}
+      {% assign option_key = "option" | append: option.position %}
+      {% assign option_choices = option | map: 'values' | uniq %}
+
+      <fieldset class="product-form__input">
+        <legend>
+          {{ option.name }}
+        </legend>
+
+        {% for option_choice in option_choices %}
+          {% assign checked = false %}
+
+          {% if option_choice == option.selected_value %}
+            {% assign checked = true %}
+          {% endif %}
+
+          <input id="{{ option_choice }}" class="js-product-option-input" type="radio" name="option{{ option.position }}"
+        value="{{ option_choice }}" {% if checked %}checked{% endif %} />
+          <label for="{{ option_choice }}"><span>{{ option_choice }}</span></label>
+        {% endfor %}
+      </fieldset>
+    {% endfor %}
+  {% endunless %}
+
+</div>
