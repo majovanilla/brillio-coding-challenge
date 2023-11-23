@@ -7,7 +7,7 @@
   <h3 align="center">Brillio's Coding Challenge</h3>
   <h2 align="center">Shopify's Product Page with Ajax Cart</h2>
 
-  <img align="center" src="https://ibb.co/ZS0vTsS" width="500" alt="product page">
+<a href="https://ibb.co/ZS0vTsS"><img src="https://i.ibb.co/5kPCcDk/Screen-Shot-2023-11-22-at-21-24-32.png" alt="Screen-Shot-2023-11-22-at-21-24-32" border="0"></a>
 
   <p align="center">
     This repo showcases the most relevant files of a functional product page built using Dawn theme as a base, following Shopify's documentation and best practices regarding Ajax API.
