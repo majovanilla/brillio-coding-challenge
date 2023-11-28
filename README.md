@@ -28,7 +28,7 @@
 
 ### Shopify Store Live Demo
 
-[Take a look at the product page here]([https://t7e1cliucbn89joe-84282376480.shopifypreview.com](https://v604kmw2n0rcg7eq-84282376480.shopifypreview.com))
+[Take a look at the product page here](https://v604kmw2n0rcg7eq-84282376480.shopifypreview.com)
 
 _Store Password:_
 BrillioCodingChallenge
