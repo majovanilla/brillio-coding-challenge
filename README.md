@@ -28,7 +28,7 @@
 
 ### Shopify Store Live Demo
 
-[Take a look at the product page here](https://the-joking-dev-store.myshopify.com/?_ab=0&_fd=0&_sc=1/products/the-3p-fulfilled-snowboard?variant=47159636918560)
+[Take a look at the product page here](https://the-joking-dev-store.myshopify.com/products/the-3p-fulfilled-snowboard?variant=47159636918560)
 
 _Store Password:_
 BrillioCodingChallenge
